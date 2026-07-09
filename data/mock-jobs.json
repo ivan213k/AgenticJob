@@ -1,0 +1,45 @@
+{
+  "_comment": "Mock job postings for the AgenticJob POC. Descriptions are intentionally full of marketing 'fluff' so the /scan skill has something to summarize away. Not real jobs.",
+  "jobs": [
+    {
+      "id": 1,
+      "title": "Senior Backend Engineer",
+      "company": "Acme Corp",
+      "location": "Remote (EU)",
+      "description": "Are you a rockstar 10x ninja engineer who breathes clean code and eats scaling challenges for breakfast?! Acme Corp is a fast-paced, mission-driven, synergy-fueled unicorn disrupting the payments space. We offer free snacks, a foosball table, and unlimited PTO (that nobody takes). In this role you will build and scale our Go-based payment APIs, own distributed systems handling millions of transactions, and mentor junior engineers. Requirements: 5+ years backend experience, strong Go, and solid distributed-systems fundamentals.",
+      "requirements": ["5+ years backend", "Go", "distributed systems", "APIs"]
+    },
+    {
+      "id": 2,
+      "title": "Frontend Engineer (React)",
+      "company": "Bright Labs",
+      "location": "Berlin, Germany (Hybrid)",
+      "description": "Join our world-class, award-winning, category-defining team of passionate innovators! Bright Labs is looking for a wizard who will delight our users with pixel-perfect experiences. You will build and maintain our React + TypeScript web app, collaborate with designers, and improve performance and accessibility. We have kombucha on tap and a dog-friendly office. Requirements: 3+ years frontend, strong React and TypeScript, an eye for UX.",
+      "requirements": ["3+ years frontend", "React", "TypeScript", "accessibility"]
+    },
+    {
+      "id": 3,
+      "title": "Data Engineer",
+      "company": "Nimbus Analytics",
+      "location": "Remote (Global)",
+      "description": "Do you dream in SQL and wake up thinking about pipelines? Nimbus Analytics is a hyper-growth, data-obsessed, customer-first powerhouse changing how enterprises make decisions. You will design and maintain ETL pipelines, model data warehouses, and ensure data quality across the org. Perks include a learning budget and an annual company retreat in the Alps. Requirements: 4+ years data engineering, strong SQL and Python, experience with a modern warehouse (Snowflake/BigQuery) and orchestration (Airflow/dbt).",
+      "requirements": ["4+ years data engineering", "SQL", "Python", "Airflow/dbt", "Snowflake/BigQuery"]
+    },
+    {
+      "id": 4,
+      "title": "DevOps / Platform Engineer",
+      "company": "Vertex Systems",
+      "location": "London, UK (On-site)",
+      "description": "Calling all infrastructure heroes! Vertex Systems is a bold, relentless, future-forward scale-up on a rocketship trajectory. You will own our Kubernetes platform, build CI/CD pipelines, manage cloud infrastructure as code, and champion reliability. We believe in work hard, play hard, and there's a rooftop bar. Requirements: 4+ years in DevOps/SRE, Kubernetes, Terraform, and a major cloud (AWS/GCP).",
+      "requirements": ["4+ years DevOps/SRE", "Kubernetes", "Terraform", "AWS/GCP", "CI/CD"]
+    },
+    {
+      "id": 5,
+      "title": "Product Manager",
+      "company": "Lumen Health",
+      "location": "Remote (US)",
+      "description": "We're on a bold mission to revolutionize healthcare and we want a visionary storyteller to join our tribe of changemakers! At Lumen Health, no two days are the same. You will own the product roadmap for our patient-facing app, run discovery with users, and partner closely with engineering and design to ship outcomes that matter. Requirements: 4+ years product management, experience shipping consumer products, strong analytical and communication skills; healthcare experience a plus.",
+      "requirements": ["4+ years product management", "consumer products", "discovery", "analytics"]
+    }
+  ]
+}

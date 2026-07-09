@@ -1,0 +1,6 @@
+# Generated artifacts — keep the directories, ignore their contents
+profiles/*
+!profiles/.gitkeep
+
+output/*
+!output/.gitkeep

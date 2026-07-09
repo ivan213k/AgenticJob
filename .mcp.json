@@ -1,0 +1,9 @@
+{
+  "_comment": "PLACEHOLDER / non-functional. Marks the intended integration point for real job sources. In a real deployment, 'job-sources' would be an MCP server exposing tools like linkedin_jobs(filter) and other_service_jobs(filter). For this POC, the scan-jobs skill reads data/mock-jobs.json instead.",
+  "mcpServers": {
+    "job-sources": {
+      "command": "echo",
+      "args": ["job-sources MCP server placeholder — not implemented in this POC"]
+    }
+  }
+}
