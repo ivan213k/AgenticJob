@@ -12,9 +12,10 @@ CVs, or call real APIs. **Do not build real integrations (LinkedIn scraping, liv
 real CV tailoring, auth, etc.) unless the user explicitly asks.**
 
 ## Workflow
-1. `/setup-profile` — collect the user's basics (name, target job title, a few preferences) and save
-   a profile to `profiles/profile.md`. Other commands should prompt the user to run this first if no
-   profile exists.
+1. `/setup-profile` — the one **real** step in this POC. Collects the user's actual profile (name,
+   target job title, preferences) plus a **required CV upload**, and saves structured data to
+   `profiles/profile.json` (+ a rendered `profiles/profile.md` and the CV under `profiles/cv/`). Other
+   commands should prompt the user to run this first if no profile exists.
 2. `/scan [count]` — list summarized jobs (default 10) from `data/mock-jobs.json`, stripping employer
    "fluff" into short summaries.
 3. `/prepare-apply <job#>` — produce a demo tailored CV for a selected job into `output/`.
