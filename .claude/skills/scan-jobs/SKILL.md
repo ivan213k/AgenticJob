@@ -4,10 +4,11 @@ description: List available jobs as short, fluff-free summaries so the user can 
   to. Use when the user runs /scan or asks to see / search for jobs. Honors an optional count (default 10).
 ---
 
-# Scan Jobs (demonstration)
+# Scan Jobs
 
-> **Demo skill.** Reads mock jobs from `data/mock-jobs.json`. A real version would call live job-source
-> APIs / an MCP server instead (see below).
+Queries the real `job-sources` MCP server (see `.mcp.json`) for one provider at a time, scores the
+results against the user's profile via the **score-jobs** skill, and presents a ranked, numbered
+list.
 
 ## Steps
 
@@ -15,19 +16,42 @@ description: List available jobs as short, fluff-free summaries so the user can 
    first, then stop.
 
 2. **Determine count.** Use the count passed by the command; default to **10** if none was given.
+   This is the number of jobs to *display* — step 4 will fetch more than this.
 
-3. **Fetch jobs.** For this demo, read `data/mock-jobs.json` (all entries — the mock data has no
-   filtering, so pull everything).
+3. **Ask which provider.** List the MCP tools exposed by the `job-sources` server and find every
+   tool named `search_{provider}_jobs` — each one is an available provider (don't hardcode a
+   provider list; a newly added provider should show up automatically). Present the provider names
+   via `AskUserQuestion` as a single-select choice. Only call the chosen provider's tools for this
+   scan — **never call multiple providers and merge results.**
 
-4. **Rank by relevance to the profile.** Compare each job's title, requirements, and description
-   against the profile's target job title, skills, and preferences (from `profiles/profile.md`).
-   Favor jobs whose title/stack matches the target role and whose requirements overlap most with the
-   profile's skills; use location/remote preference as a tiebreaker. Sort best-match first, then take
-   the top `count`.
+4. **Fetch a candidate pool (overfetch).** Derive query arguments from `profiles/profile.json`:
+   - `search`: a plain keyword from `target_job_titles` (this is a plain case-insensitive
+     substring match now, not regex — no escaping needed).
+   - `countryCode`: the ISO 3166-1 alpha-2 code inferred from the profile's `location` country
+     (e.g. "Leipzig, Saxony, Germany" → `DE`). If it can't be inferred confidently, ask the user.
+   - `locations`: the profile's city/region, plus `"Remote"` when `remote_preference` is
+     remote/hybrid/flexible.
+   - `preferredSkills`: the profile's `skills` list. Use `preferredSkills` (at-least-one-match),
+     not `mustHaveSkills` (all-must-match) — the goal is a candidate pool for scoring, not a hard
+     filter that could zero it out.
+   - `take`: request **more than `count`** (e.g. `count * 3`, capped around 30–50) so `score-jobs`
+     in step 5 has a real pool to choose from — raw provider filtering is coarse; profile-fit
+     judgment happens in step 5, not here.
 
-5. **Strip the fluff.** Each mock posting has verbose marketing copy. Condense each into a **1–2 line
-   summary** that keeps only what matters to a candidate: what the role actually does and standout
-   requirements. Drop slogans, "rockstar/ninja" language, and boilerplate perks.
+   Call the chosen provider's `search_{provider}_jobs` MCP tool with these arguments.
+
+   - **Zero or very few results:** tell the user, suggest loosening filters (fewer
+     `preferredSkills`, broader `locations`), and offer to retry relaxed.
+   - **Fewer survive scoring than `count` (step 5 says so):** if the tool's `totalCount` indicates
+     more results exist beyond this page, retry with `skip` advanced to the next page before
+     giving up.
+   - **MCP call fails / server unreachable:** tell the user clearly that the real job-sources
+     server is unreachable (include the error if known), and **stop — do not fall back to mock
+     data.**
+
+5. **Score and rank.** Invoke the **score-jobs** skill with the fetched candidate pool, the
+   profile, and `count`. Use its output (ranked jobs with condensed summaries and fit rationale)
+   directly for the next step.
 
 6. **Present a numbered list**, including each job's source platform, publish date, and link, e.g.:
 
@@ -41,9 +65,12 @@ description: List available jobs as short, fluff-free summaries so the user can 
 
    Tell the user they can run `/prepare-apply <#>` or `/cover-letter <#>` for any listed job.
 
-## Real integration point (placeholder)
-Replace step 3 with calls to real job sources — e.g. `GET /api/linkedinjobs?filter=<value>`,
-`GET /api/otherServiceJobs?filter=<value>`, or the `job-sources` MCP server declared in `.mcp.json`.
-Those APIs would accept filters derived from the saved profile (target title, location, skills), but
-even filtered results should still be ranked (step 4) before truncating to `count` — filtering narrows
-the pool, it doesn't guarantee the top `count` are the best matches.
+7. **Cache the results.** Write the displayed list to `data/last-scan.json`, keyed by display
+   number, including: the `provider`, the job's `id` **exactly as returned by the MCP tool** (treat
+   it as an opaque token — don't parse or cast it, the API is expected to switch it from integer to
+   string), the full `Job` fields, and the `score-jobs` summary/rationale. `/prepare-apply` and
+   `/cover-letter` resolve `<job#>` from this file.
+
+## Data source
+Real data only, via the `job-sources` MCP server. If it's unreachable there is no mock fallback —
+`data/mock-jobs.json` is kept in the repo for reference but is no longer read by this skill.

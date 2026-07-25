@@ -4,3 +4,5 @@ profiles/*
 
 output/*
 !output/.gitkeep
+
+data/last-scan.json

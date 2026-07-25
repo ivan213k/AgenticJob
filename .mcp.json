@@ -1,9 +1,9 @@
 {
-  "_comment": "PLACEHOLDER / non-functional. Marks the intended integration point for real job sources. In a real deployment, 'job-sources' would be an MCP server exposing tools like linkedin_jobs(filter) and other_service_jobs(filter). For this POC, the scan-jobs skill reads data/mock-jobs.json instead.",
+  "_comment": "Real job-sources MCP server (streamable-HTTP transport). Exposes search_{provider}_jobs and get_{provider}_job tools per provider (currently indeed, stepstone). Used by the scan-jobs, prepare-apply, and cover-letter skills.",
   "mcpServers": {
     "job-sources": {
-      "command": "echo",
-      "args": ["job-sources MCP server placeholder — not implemented in this POC"]
+      "type": "http",
+      "url": "http://192.168.0.249:8080/mcp"
     }
   }
 }
