@@ -7,9 +7,9 @@ description: Collect the user's real job-search profile — contact info, target
 
 # Setup Profile
 
-> **Real skill.** This is the one part of the AgenticJob POC that collects and stores actual user data
-> (see `CLAUDE.md`). `/scan`, `/prepare-apply`, and `/cover-letter` still run on mock job data — only
-> profile collection is real here.
+> **Real skill.** Collects and stores actual user data (see `CLAUDE.md`). The baseline
+> `profiles/cv/cv.json` written here is what `/prepare-apply` tailors and renders to PDF, and what
+> `/cover-letter` draws real achievements from.
 
 ## Storage layout
 
@@ -19,7 +19,7 @@ profiles/
   profile.md            # human-readable render of profile.json
   cv/
     original.<ext>      # exact copy of the uploaded CV (pdf or txt/md)
-    extracted.md          # plain-text extraction: contact, experience, skills, education
+    cv.json               # structured extraction in the cv-renderer schema — the baseline CV
 ```
 
 `profiles/*` is gitignored — none of this leaves the user's machine via git.
@@ -30,6 +30,11 @@ profiles/
    target title, whether a CV is on file) and ask whether to keep it, update individual fields, or
    redo it from scratch. If the user only wants to update a few fields, skip straight to those and
    re-render `profile.md` at the end — don't re-ask everything.
+
+   **Migration:** if a profile exists but `profiles/cv/cv.json` is missing, offer to generate just it —
+   from a legacy `profiles/cv/extracted.md` if present (delete `extracted.md` afterwards, it's
+   superseded), otherwise from `original.<ext>` — following step 3's conversion rules, without redoing
+   anything else. Update `profile.json`'s `cv` object accordingly.
 
 2. **Require the CV before anything else.** This is mandatory — do not save a profile without one.
    Ask the user for the **local file path** to their CV. Storing the CV requires a byte-for-byte copy
@@ -54,10 +59,40 @@ profiles/
    - Copy the original file byte-for-byte into `profiles/cv/original.<ext>` (matching the source
      extension). Use a filesystem copy (e.g. `cp`), never rewrite it through a text-writing tool —
      that will corrupt a PDF.
-   - From your Read of the CV, write a plain-text/Markdown extraction to `profiles/cv/extracted.md`
-     covering: contact details found in the CV, work history (company, title, dates, bullet points as
-     written), education, skills/technologies, certifications. This is what `prepare-apply` and
-     `cover-letter` should read from later — don't summarize away real bullet points, keep them intact.
+   - From your Read of the CV, build the **baseline CV** `profiles/cv/cv.json` in the `cv-renderer`
+     schema — this is what `prepare-apply` tailors and `cover-letter` reads later:
+
+     ```json
+     {
+       "fullName": "…", "headline": "…", "summary": "…",
+       "contact": { "email": "…", "location": "…", "phone": null, "linkedInUrl": null },
+       "skills": ["…"],
+       "experience": [{
+         "role": "…", "company": "…",
+         "startDate": "yyyy-MM-dd", "endDate": "yyyy-MM-dd or null",
+         "highlights": ["…"], "technologies": ["…"],
+         "projectName": null, "projectDescription": null
+       }],
+       "education": [{ "degree": "…", "institution": "…", "location": "…",
+                       "startDate": "yyyy-MM-dd", "endDate": "yyyy-MM-dd" }],
+       "languages": [{ "name": "…", "level": "…" }],
+       "certifications": [{ "name": "…", "issuedDate": "yyyy-MM-dd", "url": null }]
+     }
+     ```
+
+     Conversion rules:
+     - Dates are ISO `yyyy-MM-dd`; a month-only date becomes the first of that month; a current role
+       gets `endDate: null`.
+     - `highlights` are the CV's bullet points **as written** — don't summarize away real bullets.
+     - A per-role technologies list in the CV goes to `technologies`; per-role project prose goes to
+       `projectName` / `projectDescription`.
+     - `fullName`, `headline` (current title), `summary`, `skills`, `education`, `languages`,
+       `certifications` map straight from the CV; `contact.email` and `contact.location` are required
+       by the renderer — ask the user if the CV doesn't state them.
+     - If the CV holds something the schema can't (e.g. publications), tell the user it won't appear
+       in rendered PDFs — don't silently drop it.
+
+     Show the resulting JSON to the user for confirmation before saving.
 
 4. **Collect the rest of the profile.** Pre-fill suggestions from the CV extraction where you can
    (name, most recent title, skills, years of experience) and let the user confirm or correct each
@@ -95,7 +130,7 @@ profiles/
      "cv": {
        "original_filename": "<name the user uploaded>",
        "original_path": "profiles/cv/original.<ext>",
-       "extracted_path": "profiles/cv/extracted.md",
+       "json_path": "profiles/cv/cv.json",
        "uploaded_at": "<ISO date>"
      },
      "updated_at": "<ISO date>"
@@ -112,7 +147,7 @@ profiles/
    - Seniority: <seniority or "—"> (<years_experience or "—"> yrs)
    - Key skills: <skills or "—">
    - Links: <linkedin>, <portfolio>, <github>
-   - CV: `profiles/cv/original.<ext>` (extracted: `profiles/cv/extracted.md`)
+   - CV: `profiles/cv/original.<ext>` (baseline JSON: `profiles/cv/cv.json`)
    ```
 
 7. **Confirm** to the user that the profile and CV were saved, and that they can now run `/scan` to
