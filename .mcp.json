@@ -1,9 +1,13 @@
 {
-  "_comment": "Real job-sources MCP server (streamable-HTTP transport). Exposes search_{provider}_jobs and get_{provider}_job tools per provider (currently indeed, stepstone). Used by the scan-jobs, prepare-apply, and cover-letter skills.",
+  "_comment": "Real MCP servers (streamable-HTTP transport). job-sources exposes search_{provider}_jobs and get_{provider}_job tools per provider (currently indeed, stepstone, linkedin) — used by scan-jobs, prepare-apply, cover-letter. cv-renderer (JsonToCvApi) exposes ping and render_cv(cv) which renders a CV JSON to PDF and returns an expiring download URL — used by prepare-apply.",
   "mcpServers": {
     "job-sources": {
       "type": "http",
       "url": "http://192.168.0.249:8080/mcp"
+    },
+    "cv-renderer": {
+      "type": "http",
+      "url": "http://192.168.0.249:8081/mcp"
     }
   }
 }

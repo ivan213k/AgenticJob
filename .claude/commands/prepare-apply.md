@@ -1,7 +1,8 @@
 ---
-description: Prepare a tailored CV for a selected job
-argument-hint: <job#>
+description: Prepare a full application package (tailored CV PDF + cover letter) for a job
+argument-hint: <job# | job-url>
 ---
 
-Invoke the **prepare-apply** skill for the job selected in `$ARGUMENTS` (the number from `/scan`).
-Produce a tailored CV into `output/`. If no profile exists, ask the user to run `/setup-profile` first.
+Invoke the **prepare-apply** skill for `$ARGUMENTS` — either a job number from `/scan` or a job
+posting URL. It builds a per-job folder in `output/` with the job summary, tailored CV (JSON + PDF),
+and cover letter. If no profile or baseline CV exists, ask the user to run `/setup-profile` first.
