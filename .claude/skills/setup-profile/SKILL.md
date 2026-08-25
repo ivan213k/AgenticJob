@@ -65,7 +65,12 @@ profiles/
      ```json
      {
        "fullName": "…", "headline": "…", "summary": "…",
-       "contact": { "email": "…", "location": "…", "phone": null, "linkedInUrl": null },
+       "contact": [
+         { "kind": "Email", "value": "…" },
+         { "kind": "Address", "value": "…" },
+         { "kind": "Phone", "value": "…" },
+         { "kind": "Linkedin", "value": "…" }
+       ],
        "skills": ["…"],
        "experience": [{
          "role": "…", "company": "…",
@@ -87,8 +92,11 @@ profiles/
      - A per-role technologies list in the CV goes to `technologies`; per-role project prose goes to
        `projectName` / `projectDescription`.
      - `fullName`, `headline` (current title), `summary`, `skills`, `education`, `languages`,
-       `certifications` map straight from the CV; `contact.email` and `contact.location` are required
-       by the renderer — ask the user if the CV doesn't state them.
+       `certifications` map straight from the CV. `contact` is an array of `{kind, value, label}`
+       entries — `kind` is one of `Address, Email, Phone, Linkedin, Github, Link, Social`; `label` is
+       optional display text (e.g. "Portfolio") and can be omitted/`null`. An `Email` entry and an
+       `Address` entry are required by the renderer — ask the user if the CV doesn't state them; add
+       `Phone`, `Linkedin`, `Github`, etc. entries for whatever else the CV/profile provides.
      - If the CV holds something the schema can't (e.g. publications), tell the user it won't appear
        in rendered PDFs — don't silently drop it.
 

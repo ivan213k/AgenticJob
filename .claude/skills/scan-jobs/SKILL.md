@@ -34,6 +34,10 @@ list.
    - `preferredSkills`: the profile's `skills` list. Use `preferredSkills` (at-least-one-match),
      not `mustHaveSkills` (all-must-match) — the goal is a candidate pool for scoring, not a hard
      filter that could zero it out.
+   - `searchAliases`: fallback search terms for the same role, **strongest match first** (e.g. for
+     `search: "C# Developer"`, aliases like `[".NET Developer", "C# Entwickler"]`) — only used by
+     the server when `search` alone returns fewer than `take` results, so it's cheap to always
+     populate a few from the profile's other `target_job_titles` / obvious synonyms.
    - `take`: request **more than `count`** (e.g. `count * 3`, capped around 30–50) so `score-jobs`
      in step 5 has a real pool to choose from — raw provider filtering is coarse; profile-fit
      judgment happens in step 5, not here.

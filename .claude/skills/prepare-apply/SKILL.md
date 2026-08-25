@@ -62,7 +62,10 @@ only with CV JSON; PDF layout is entirely the renderer's job.
    render is wasted.
 
 6. **Render & download.** Call `render_cv` on the `cv-renderer` MCP server with the tailored JSON.
-   The response contains a download URL with an `expiresAt` — download it **immediately**; never
+   Pass `language` as the posting's language (`En`, `De`, `Ua`, `Ru`, or `Es`) when it's clearly not
+   English — this only translates the template's own headings/labels and month names, never the CV
+   content itself; default to `En` when unclear. The response contains a download URL with an
+   `expiresAt` — download it **immediately**; never
    save the URL for later. Save as `<folder>/<Firstname>_<Lastname>_CV.pdf` (from the CV's
    `fullName`, e.g. `Ivan_Zakharuk_CV.pdf`) — recruiter-facing convention: the filename must
    identify the candidate, underscores instead of spaces for ATS/email safety, no company name.
