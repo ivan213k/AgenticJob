@@ -1,15 +1,15 @@
 ---
 name: setup-profile
-description: Collect the user's real job-search profile — contact info, target role, preferences, and
+description: Collect the user's job-search profile — contact info, target role, preferences, and
   a required CV upload — and save it under profiles/. Use when the user runs /setup-profile, asks to
   set up or update their profile, or when another job-search step needs a profile that doesn't exist yet.
 ---
 
 # Setup Profile
 
-> **Real skill.** Collects and stores actual user data (see `CLAUDE.md`). The baseline
-> `profiles/cv/cv.json` written here is what `/prepare-apply` tailors and renders to PDF, and what
-> `/cover-letter` draws real achievements from.
+> Collects and stores the user's actual data (see `CLAUDE.md`). The baseline `profiles/cv/cv.json`
+> written here is what `/prepare-apply` tailors and renders to PDF, and what `/cover-letter` draws
+> achievements from.
 
 ## Storage layout
 

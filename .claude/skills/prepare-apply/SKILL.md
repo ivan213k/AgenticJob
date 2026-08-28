@@ -1,15 +1,15 @@
 ---
 name: prepare-apply
-description: Build a real per-job application package — tailored CV (JSON + rendered PDF) and cover
+description: Build a per-job application package — tailored CV (JSON + rendered PDF) and cover
   letter — into output/<job-folder>/. Use when the user runs /prepare-apply <job# | job-url> or asks
   to tailor their CV / prepare an application for a job.
 ---
 
 # Prepare Apply
 
-Real skill. Produces one folder per job under `output/` containing the fluff-free job summary, the
-tailored CV (JSON + PDF rendered by the `cv-renderer` MCP server), and a cover letter. The LLM works
-only with CV JSON; PDF layout is entirely the renderer's job.
+Produces one folder per job under `output/` containing the fluff-free job summary, the tailored CV
+(JSON + PDF rendered by the `cv-renderer` MCP server), and a cover letter. The LLM works only with
+CV JSON; PDF layout is entirely the renderer's job.
 
 ## Steps
 

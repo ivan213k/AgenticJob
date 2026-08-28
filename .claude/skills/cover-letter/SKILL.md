@@ -1,14 +1,14 @@
 ---
 name: cover-letter
-description: Write a real cover letter for a specific job into that job's output/ folder. Use when the
+description: Write a cover letter for a specific job into that job's output/ folder. Use when the
   user runs /cover-letter <job# | job-url> or asks to write / draft a cover letter for a job. Also
   invoked by prepare-apply as part of the full application package.
 ---
 
 # Cover Letter
 
-Real skill. Drafts a cover letter grounded in the user's actual CV and saves it into the same per-job
-folder that `/prepare-apply` uses, so each job's application package lives in one place.
+Drafts a cover letter grounded in the user's actual CV and saves it into the same per-job folder
+that `/prepare-apply` uses, so each job's application package lives in one place.
 
 ## Steps
 
