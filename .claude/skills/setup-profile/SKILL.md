@@ -81,7 +81,13 @@ profiles/
        "education": [{ "degree": "…", "institution": "…", "location": "…",
                        "startDate": "yyyy-MM-dd", "endDate": "yyyy-MM-dd" }],
        "languages": [{ "name": "…", "level": "…" }],
-       "certifications": [{ "name": "…", "issuedDate": "yyyy-MM-dd", "url": null }]
+       "certifications": [{ "name": "…", "issuedDate": "yyyy-MM-dd", "url": null }],
+       "projects": [{
+         "name": "…", "description": "…",
+         "startDate": "yyyy-MM-dd or null", "endDate": "yyyy-MM-dd or null",
+         "technologies": ["…"],
+         "repositories": [{ "name": "…", "url": "…" }]
+       }]
      }
      ```
 
@@ -91,6 +97,10 @@ profiles/
      - `highlights` are the CV's bullet points **as written** — don't summarize away real bullets.
      - A per-role technologies list in the CV goes to `technologies`; per-role project prose goes to
        `projectName` / `projectDescription`.
+     - Standalone projects **not tied to an employer** (side projects, open source, personal builds)
+       go in the top-level `projects` array instead — `name` is required, everything else
+       (`description`, dates, `technologies`, `repositories: [{name, url}]`) is optional/nullable.
+       Omit or leave `null` if the CV has none.
      - `fullName`, `headline` (current title), `summary`, `skills`, `education`, `languages`,
        `certifications` map straight from the CV. `contact` is an array of `{kind, value, label}`
        entries — `kind` is one of `Address, Email, Phone, Linkedin, Github, Link, Social`; `label` is

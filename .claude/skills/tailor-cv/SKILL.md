@@ -64,6 +64,9 @@ here; rendering is the caller's job (`cv-renderer` MCP).
      drop a clearly irrelevant bullet (logged). Never inflate numbers or scope.
    - `experience[].technologies` — reorder so overlapping technologies lead.
    - `projectName` / `projectDescription` — minor rephrasing toward the job's domain where truthful.
+   - `projects` — reorder so the most relevant standalone projects lead; optionally drop a clearly
+     irrelevant one (logged). Same truthfulness rules as `experience`: no invented technologies or
+     scope.
 
 4. **Keep the language of the baseline CV** (don't translate the CV to the posting's language unless
    the user asks).
