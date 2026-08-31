@@ -18,7 +18,7 @@ profiles/
   profile.json        # structured source of truth — other skills read this
   profile.md            # human-readable render of profile.json
   cv/
-    original.<ext>      # exact copy of the uploaded CV (pdf or txt/md)
+    original.<ext>      # exact copy of the uploaded CV (md/txt, pdf, or json)
     cv.json               # structured extraction in the cv-renderer schema — the baseline CV
 ```
 
@@ -48,19 +48,31 @@ profiles/
    risk and unreliable at picking the right file. If the user doesn't know the exact path, only search
    inside folders they explicitly name (e.g. "check my Downloads") with a shallow, targeted glob —
    never an unscoped root/home search.
-   - **Accepted formats: PDF or plain text/Markdown.** If they provide a `.docx` or other format the
-     Read tool can't parse, ask them to export/save it as PDF (or paste the text directly) — don't
-     attempt to parse it anyway.
+   - **Accepted formats: Markdown/plain text, PDF, or JSON.** No format is preferred over another to
+     ask for by default, but if the user has a choice, Markdown/plain text is the safest bet — PDF
+     text extraction can lose structure (columns, tables) that Markdown preserves exactly. JSON is
+     also accepted; see step 3 for how it's handled. If they provide a `.docx` or other format the
+     Read tool can't parse, ask them to export/save it as PDF/Markdown (or paste the text directly) —
+     don't attempt to parse it anyway.
    - Once you have a valid path, read it with the Read tool to confirm it's parseable before moving on.
    - If the user has no CV available right now, stop and tell them to run `/setup-profile` again once
      they have one — don't create a partial profile without a CV.
 
 3. **Store the CV.**
    - Copy the original file byte-for-byte into `profiles/cv/original.<ext>` (matching the source
-     extension). Use a filesystem copy (e.g. `cp`), never rewrite it through a text-writing tool —
-     that will corrupt a PDF.
-   - From your Read of the CV, build the **baseline CV** `profiles/cv/cv.json` in the `cv-renderer`
-     schema — this is what `prepare-apply` tailors and `cover-letter` reads later:
+     extension, `.json` included). Use a filesystem copy (e.g. `cp`), never rewrite it through a
+     text-writing tool — that will corrupt a PDF.
+   - **If the uploaded file is JSON**, check it against the `cv-renderer` schema below before doing
+     any LLM extraction:
+     - If it already matches the schema (same field names/shapes — `projects`/`certifications` etc.
+       may simply be absent), use it as `cv.json` directly, only filling in required fields the
+       renderer needs (`Email`/`Address` contact entries) if missing — ask the user for those rather
+       than inventing them.
+     - If it's some other JSON shape (e.g. a resume export from another tool), map its fields into
+       the schema using the same conversion rules below, same as you would from PDF/Markdown text.
+     - Either way, still show the resulting JSON to the user for confirmation before saving.
+   - Otherwise, from your Read of the CV, build the **baseline CV** `profiles/cv/cv.json` in the
+     `cv-renderer` schema — this is what `prepare-apply` tailors and `cover-letter` reads later:
 
      ```json
      {
