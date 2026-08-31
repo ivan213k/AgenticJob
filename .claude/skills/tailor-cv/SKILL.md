@@ -35,7 +35,9 @@ here; rendering is the caller's job (`cv-renderer` MCP).
    - **Reorders** (`skills`, `experience[].technologies`, bullet order) — one line, not a diff:
      `Skills: moved Docker, Kubernetes (AKS), Helm Charts to front`.
    - **Drops** — one line: `Dropped bullet: "…" (irrelevant to this role)`.
-   - **Skill-gap notes** — one line each: `Gap: job wants Kubernetes — not in your CV`.
+   - **Skill-gap notes** — one line each, only for genuinely unmet requirements (see the alias and
+     requirement-reading rules): `Gap: job wants Kubernetes — not in your CV`, 
+     `Bonus items not in your CV: React, Android`.
    - Group by section (headline/summary, per-role, skills) with a short heading per group; omit empty
      groups entirely rather than saying "no changes here".
 
@@ -51,7 +53,25 @@ here; rendering is the caller's job (`cv-renderer` MCP).
    "Festanstellung", degree names, languages). Extract the actual skills/technologies/keywords from
    `requirements` + `description` and tailor against those only.
 
-3. **Typical adjustments** (each one logged):
+3. **Normalize skill names to the posting's vocabulary — truthfully.** The same skill often goes by
+   different names ("AKS" vs "Kubernetes", "GHA" vs "GitHub Actions", "Postgres" vs "PostgreSQL");
+   recruiters and ATS filters search for the posting's exact term. Where the baseline holds a skill
+   under an alias or abbreviation, rename it to the posting's term while keeping the specific variant
+   in parentheses — e.g. "AKS" → "Kubernetes (AKS)" — and log it as a rewrite. This is
+   canonicalization of a real skill, never an addition: if the baseline skill is genuinely narrower
+   than the posting's term, it stays as-is. Apply the same alias check **before reporting a gap** — a
+   skill present under another name is a rename, not a gap.
+
+4. **Read requirements as the posting means them before reporting gaps.** Three cases that are not
+   flat gaps:
+   - **Alternatives lists** — "MongoDB, PostgreSQL, SQL Server, or similar" is one requirement
+     satisfied by *any* listed (or genuinely similar) option. If the baseline has SQL Server, the
+     requirement is met: no gap note at all, and never list the sibling options as missing.
+   - **Nice-to-haves** — items the posting marks as bonus/plus/nice-to-have go in a separate line
+     from hard requirements (`Bonus items not in your CV: …`), so the user can tell which gaps
+     actually matter for applying.
+
+5. **Typical adjustments** (each one logged):
    - `headline` — align with the job's title where the baseline honestly supports it (e.g. ".NET
      Software Engineer" → "Senior .NET Engineer" for a senior .NET posting; never claim a seniority
      or specialty the baseline doesn't back).
@@ -68,8 +88,8 @@ here; rendering is the caller's job (`cv-renderer` MCP).
      irrelevant one (logged). Same truthfulness rules as `experience`: no invented technologies or
      scope.
 
-4. **Keep the language of the baseline CV** (don't translate the CV to the posting's language unless
+6. **Keep the language of the baseline CV** (don't translate the CV to the posting's language unless
    the user asks).
 
-5. Return the tailored object and the change log to the caller — this skill does not write files, ask
+7. Return the tailored object and the change log to the caller — this skill does not write files, ask
    the user anything, or render PDFs itself.
