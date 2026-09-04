@@ -16,7 +16,7 @@ list.
    first, then stop.
 
 2. **Determine count.** Use the count passed by the command; default to **10** if none was given.
-   This is the number of jobs to *display* — step 4 will fetch more than this.
+   This is the number of jobs to *display* — step 6 will fetch more than this.
 
 3. **Ask which provider.** List the MCP tools exposed by the `job-sources` server and find every
    tool named `search_{provider}_jobs` — each one is an available provider (don't hardcode a
@@ -24,7 +24,7 @@ list.
    via `AskUserQuestion` as a single-select choice. Only call the chosen provider's tools for this
    scan — **never call multiple providers and merge results.**
 
-4. **Fetch a candidate pool (overfetch).** Derive query arguments from `profiles/profile.json`:
+4. **Derive the search request** from `profiles/profile.json`:
    - `search`: a plain keyword from `target_job_titles` (this is a plain case-insensitive
      substring match now, not regex — no escaping needed).
    - `countryCode`: the ISO 3166-1 alpha-2 code inferred from the profile's `location` country
@@ -39,25 +39,44 @@ list.
      the server when `search` alone returns fewer than `take` results, so it's cheap to always
      populate a few from the profile's other `target_job_titles` / obvious synonyms.
    - `take`: request **more than `count`** (e.g. `count * 3`, capped around 30–50) so `score-jobs`
-     in step 5 has a real pool to choose from — raw provider filtering is coarse; profile-fit
-     judgment happens in step 5, not here.
+     in step 6 has a real pool to choose from — raw provider filtering is coarse; profile-fit
+     judgment happens in step 6, not here.
 
-   Call the chosen provider's `search_{provider}_jobs` MCP tool with these arguments.
+5. **Show the search request and let the user adjust it.** Before calling the provider, print the
+   derived parameters plainly (provider, `search`, `searchAliases`, `locations`, `countryCode`,
+   `preferredSkills`), e.g.:
+
+   ```
+   Searching LinkedIn for:
+     Title:      C# Developer  (aliases: .NET Developer, C# Entwickler)
+     Location:   Leipzig, Remote  (DE)
+     Skills:     C#, .NET, SQL, Azure
+   ```
+
+   Ask if this looks right or if they want to adjust anything (different location, broader/narrower
+   title, different skills, etc.) before searching — a plain "looks good" / enter is enough to
+   proceed. Apply any adjustments the user gives directly to the query arguments (they override the
+   profile-derived defaults for this scan only; don't write them back to `profiles/profile.json`
+   unless the user says to). Re-show the updated parameters if they changed something, then proceed
+   once confirmed.
+
+6. **Fetch a candidate pool (overfetch).** Call the chosen provider's `search_{provider}_jobs` MCP
+   tool with the confirmed arguments from steps 4–5.
 
    - **Zero or very few results:** tell the user, suggest loosening filters (fewer
      `preferredSkills`, broader `locations`), and offer to retry relaxed.
-   - **Fewer survive scoring than `count` (step 5 says so):** if the tool's `totalCount` indicates
+   - **Fewer survive scoring than `count` (step 7 says so):** if the tool's `totalCount` indicates
      more results exist beyond this page, retry with `skip` advanced to the next page before
      giving up.
    - **MCP call fails / server unreachable:** tell the user clearly that the real job-sources
      server is unreachable (include the error if known), and **stop — do not fall back to mock
      data.**
 
-5. **Score and rank.** Invoke the **score-jobs** skill with the fetched candidate pool, the
+7. **Score and rank.** Invoke the **score-jobs** skill with the fetched candidate pool, the
    profile, and `count`. Use its output (ranked jobs with condensed summaries and fit rationale)
    directly for the next step.
 
-6. **Present a numbered list**, including each job's source platform, publish date, and link, e.g.:
+8. **Present a numbered list**, including each job's source platform, publish date, and link, e.g.:
 
    ```
    1. Senior Backend Engineer — Acme Corp (Remote)
@@ -69,7 +88,7 @@ list.
 
    Tell the user they can run `/prepare-apply <#>` or `/cover-letter <#>` for any listed job.
 
-7. **Cache the results.** Write the displayed list to `data/last-scan.json`, keyed by display
+9. **Cache the results.** Write the displayed list to `data/last-scan.json`, keyed by display
    number, including: the `provider`, the job's `id` **exactly as returned by the MCP tool** (treat
    it as an opaque token — don't parse or cast it, the API is expected to switch it from integer to
    string), the full `Job` fields, and the `score-jobs` summary/rationale. `/prepare-apply` and
