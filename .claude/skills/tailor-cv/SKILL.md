@@ -76,7 +76,10 @@ here; rendering is the caller's job (`cv-renderer` MCP).
      Software Engineer" → "Senior .NET Engineer" for a senior .NET posting; never claim a seniority
      or specialty the baseline doesn't back).
    - `summary` — rewrite to foreground the overlap between the baseline and this job; keep it factual
-     and fluff-free, and roughly the same length as the baseline's summary — never longer.
+     and fluff-free, and roughly the same length as the baseline's summary — never longer. If the
+     baseline summary contains a concrete, evidence-backed achievement (a specific project, scale, or
+     outcome), keep it — rephrase toward the job's domain if truthful, but never drop or replace it
+     with another generic capability/technology mention just to chase keyword overlap.
    - `skills` — the baseline's top 3 are a fixed anchor (they represent the user's core/strongest
      stack) and must never be reordered or displaced; only reorder from position 4 onward so
      job-matching skills lead there, and optionally drop clearly irrelevant trailing ones (logged).
