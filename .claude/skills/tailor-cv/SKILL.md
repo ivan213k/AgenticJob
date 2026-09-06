@@ -82,7 +82,9 @@ here; rendering is the caller's job (`cv-renderer` MCP).
      job-matching skills lead there, and optionally drop clearly irrelevant trailing ones (logged).
    - `experience[].highlights` — rephrase bullets to use the job's terminology **where truthful**
      (same achievement, the job's vocabulary); reorder so the most relevant bullets lead; optionally
-     drop a clearly irrelevant bullet (logged). Never inflate numbers or scope.
+     drop a clearly irrelevant bullet (logged). **Cap at 4 per role**: if the baseline has more than
+     4 highlights for a role, keep only the 4 most relevant to this job and drop the rest (each drop
+     logged individually) — never render more than 4. Never inflate numbers or scope.
    - `experience[].technologies` — reorder so overlapping technologies lead.
    - `projectName` / `projectDescription` — minor rephrasing toward the job's domain where truthful.
    - `projects` — reorder so the most relevant standalone projects lead; optionally drop a clearly
